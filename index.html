@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Vuejs Market List</title>
+
+	
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	
+</head>
+<body>
+	<div class="container" id="app">
+		<div class="row">
+			<div class="col-md-3 offset-md-4" style="margin-top: 10%">
+				<h3 class="text-center text-danger">Bazar List</h3>
+				<form @submit.prevent='addItem()'>
+					<input type="text" class="form-control" v-model="newItem">
+					<h4>{{newItem}}</h4>
+				</form>
+				<hr>
+
+				<ul class="list-group">
+					 <li class="list-group-item d-flex justify-content-between align-items-center" v-for="(item,index) in items" :key='index'>
+					 	<button class="btn btn-sm btn-danger" @click=removeItem(index)>x</button>
+					 	{{item.name}}
+					 		<input type="text" v-model="item.price" style="width: 25%; padding-left: 15px;">
+	
+					 </li>
+					 <li class="list-group-item d-flex justify-content-between align-items-center"><b>Total</b> <b class="text-danger">Tk.{{total}}</b></li>
+				</ul>
+				<a href="javascript:genPDF()" class="btn btn-info btn-sm" style="margin-top: 5%; margin-left: 25%;">Download PDF</a> 
+			</div>
+		</div>
+	</div>
+	 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.min.js"></script>
+
+	<script>
+		new Vue({
+			el:'#app',
+			computed:{
+				total(){
+					var total=0
+					this.items.forEach(item=>{
+						total=total+parseFloat(item.price)
+					})
+					return total
+				}
+			},
+			data:{
+				items:[
+				{name:'rice',price:'55'},
+				{name:'wheat',price:'45'},
+				{name:'oil',price:'110'},
+
+				],
+				newItem:"",
+			},
+			
+			methods:{
+				addItem(){
+					this.items.push({
+						name:this.newItem,
+						price:0,
+					});
+					this.newItem=''
+				},
+				removeItem(index){
+					this.items.splice(index,1)
+				}
+			}
+		})
+	</script>
+	<script>
+		{
+   html2canvas(document.body,{
+   onrendered:function(canvas){
+
+   var img=canvas.toDataURL("image/png");
+   var doc = new jsPDF();
+   doc.addImage(img,'JPEG',-70,0);
+   doc.save('Bazar list.pdf');
+   }
+
+   });
+
+  }
+	</script>
+</body>
+</html>
